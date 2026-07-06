@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "Alpha Team",
+    "agent_key": "local-agent-key"
+  },
+  {
+    "id": 2,
+    "name": "Beta Team",
+    "agent_key": "beta-agent-key"
+  }
+]

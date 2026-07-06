@@ -1,0 +1,3 @@
+Placeholder libc attachment for local testing.
+
+Real competitions would place the actual libc.so.6 here.

@@ -1,0 +1,7 @@
+This is a demo attachment for the local pwn-echo challenge.
+
+The live service is not embedded in this file. Start the challenge env through:
+
+POST /api/v1/agent/challenges/201/env
+
+Then connect to the returned TCP gateway and send the routing_header as the first line.

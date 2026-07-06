@@ -1,0 +1,68 @@
+[
+  {
+    "id": 101,
+    "name": "web-login",
+    "category": "web",
+    "description": "Demo dynamic web challenge. Start an env, browse /e/<env_id>/, and authenticate as admin.",
+    "base_score": 500,
+    "env_type": "dynamic_container",
+    "flags": [
+      "FLAG{web_login_admin}",
+      "FLAG{web_debug_backup}"
+    ],
+    "web": {
+      "template": "login",
+      "password": "localpass"
+    },
+    "hints": [
+      {
+        "id": 1,
+        "title": "default credential",
+        "content": "The demo admin password is localpass.",
+        "penalty_percent": 0.2
+      },
+      {
+        "id": 2,
+        "title": "debug backup",
+        "content": "After login, check the debug backup endpoint with debug=1.",
+        "penalty_percent": 0.2
+      }
+    ],
+    "files": []
+  },
+  {
+    "id": 201,
+    "name": "pwn-echo",
+    "category": "pwn",
+    "description": "Demo dynamic pwn challenge exposed through the fixed TCP gateway. Send the routing header first, then interact with the service.",
+    "base_score": 500,
+    "env_type": "dynamic_container",
+    "flags": [
+      "FLAG{pwn_echo_gateway}"
+    ],
+    "pwn": {
+      "service": "echo",
+      "banner": "pwn-echo demo service"
+    },
+    "hints": [
+      {
+        "id": 1,
+        "title": "gateway",
+        "content": "Connect to the TCP gateway and send the routing_header returned by the start-env API.",
+        "penalty_percent": 0.2
+      }
+    ],
+    "files": [
+      {
+        "id": 9,
+        "filename": "pwn-echo.txt",
+        "path": "attachments/pwn-echo/pwn-echo.txt"
+      },
+      {
+        "id": 10,
+        "filename": "libc.so.6.txt",
+        "path": "attachments/pwn-echo/libc.so.6.txt"
+      }
+    ]
+  }
+]

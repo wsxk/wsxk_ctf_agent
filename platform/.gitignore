@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+server.out.log
+server.err.log
+data/state.json
+data/*.tmp
+tmp_api_downloads/
