@@ -38,23 +38,11 @@ RUN apt-get update && apt-get install -y \
     libgmp-dev libmpfr-dev libfplll-dev libeigen3-dev \
     # z3 solver system lib
     libz3-dev \
-    # SageMath (Ubuntu 24.04 doesn't have system packer for sage,so I don't install it, works on aarch64 and amd64)
-    # sagemath \
     # CADO-NFS build deps
-    libhwloc-dev libbz2-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libhwloc-dev libbz2-dev
 
 # ── Podman (nested containers — run challenge Docker images inside sandbox) ───
-# Ubuntu 22.04 needs the kubic repo for podman
-RUN apt-get update && apt-get install -y curl gnupg2 \
-    && . /etc/os-release \
-    && echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" \
-       > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list \
-    && curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" \
-       | gpg --dearmor -o /etc/apt/trusted.gpg.d/kubic.gpg \
-    && apt-get update && apt-get install -y podman buildah fuse-overlayfs slirp4netns \
-    && rm -rf /var/lib/apt/lists/* \
-    || echo "Podman install failed (non-fatal) — nested containers will not be available"
+RUN apt-get update && apt-get install -y curl gnupg2 podman podman-compose
 
 # ── radare2 ───────────────────────────────────────────────────────────────────
 RUN git clone --depth=1 https://github.com/radareorg/radare2 /tmp/r2 \
@@ -88,8 +76,8 @@ RUN apt-get update && apt-get install -y libmhash-dev libmcrypt-dev libjpeg-dev 
     && rm -rf /tmp/stegseek
 
 # ── Python CTF libraries (system python3) ────────────────────────────────────
-RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel
-RUN pip3 install --no-cache-dir \
+RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel --break-system-packages
+RUN pip3 install --no-cache-dir --break-system-packages \
     pwntools \
     pycryptodome \
     sympy \
@@ -112,26 +100,14 @@ RUN pip3 install --no-cache-dir \
     pyghidra
 
 # ── PyTorch (CPU-only) + Keras ────────────────────────────────────────────────
-RUN pip3 install --no-cache-dir --ignore-installed sympy \
+RUN pip3 install --no-cache-dir --break-system-packages --ignore-installed sympy \
     torch --index-url https://download.pytorch.org/whl/cpu \
-    && pip3 install --no-cache-dir keras
+    && pip3 install --no-cache-dir  --break-system-packages keras
 
 # ── RsaCtfTool (catch-all automated RSA/factoring attacks) ────────────────────
 RUN git clone --depth=1 https://github.com/RsaCtfTool/RsaCtfTool /opt/RsaCtfTool \
-    && pip3 install --no-cache-dir /opt/RsaCtfTool
+    && pip3 install --no-cache-dir --break-system-packages --ignore-installed chardet /opt/RsaCtfTool
 
-# ── CADO-NFS (Number Field Sieve — large integer factoring + DLP) ─────────────
-RUN git clone --depth=1 https://gitlab.inria.fr/cado-nfs/cado-nfs.git /opt/cado-nfs \
-    && cd /opt/cado-nfs && make -j$(nproc)
-RUN printf '#!/bin/bash\n\
-BUILD_PARENT=/opt/cado-nfs/build\n\
-H=$(hostname)\n\
-if [ ! -d "$BUILD_PARENT/$H" ]; then\n\
-  src=$(ls -d "$BUILD_PARENT"/* 2>/dev/null | head -1)\n\
-  [ -n "$src" ] && ln -sf "$src" "$BUILD_PARENT/$H"\n\
-fi\n\
-exec python3 /opt/cado-nfs/cado-nfs.py "$@"\n' > /usr/local/bin/cado-nfs \
-    && chmod +x /usr/local/bin/cado-nfs
 
 # ── Tools reference ──────────────────────────────────────────────────────────
 COPY sandbox-tools.txt /tools.txt

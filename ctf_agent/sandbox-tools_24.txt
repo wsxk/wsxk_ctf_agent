@@ -55,7 +55,6 @@ volatility3        Memory forensics. vol -f memdump.raw windows.info
 == CRYPTOGRAPHY ==
 openssl            Crypto swiss army knife. openssl enc, openssl rsa, openssl s_client
 RsaCtfTool         Automated RSA attacks. RsaCtfTool -n N -e E --attack all
-cado-nfs           Number Field Sieve (large factoring/DLP). cado-nfs <N>
 flatter            Fast LLL lattice reduction. flatter < input_matrix
 
 == BUILD TOOLS ==
@@ -105,4 +104,3 @@ PyJWT              JWT encode/decode. import jwt; jwt.encode(payload, key, algor
 - Write generated/repaired files to /challenge/workspace/ (writable)
 - Services on the host are reachable via host.docker.internal (bridge networking).
 - RsaCtfTool is at /opt/RsaCtfTool/
-- CADO-NFS is at /opt/cado-nfs/
